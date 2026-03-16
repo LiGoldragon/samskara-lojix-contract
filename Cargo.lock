@@ -454,7 +454,6 @@ dependencies = [
 [[package]]
 name = "criome-cozo"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/criome-cozo#49996f19cc6b01e3ce957e510c1ce3c8c6142dbe"
 dependencies = [
  "cozo-ce",
  "miette 7.6.0",

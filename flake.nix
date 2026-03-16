@@ -9,9 +9,10 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    criome-cozo = { url = "github:LiGoldragon/criome-cozo"; flake = false; };
   };
 
-  outputs = { self, nixpkgs, flake-utils, crane, fenix, ... }:
+  outputs = { self, nixpkgs, flake-utils, crane, fenix, criome-cozo, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -31,6 +32,11 @@
           inherit src;
           pname = "samskara-lojix-contract";
           cargoExtraArgs = "--lib";
+          # Place path deps where Cargo.toml expects them (../criome-cozo)
+          postUnpack = ''
+            depDir=$(dirname $sourceRoot)
+            cp -rL ${criome-cozo} $depDir/criome-cozo
+          '';
         };
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
       in

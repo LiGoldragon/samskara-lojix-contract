@@ -1,2 +1,0 @@
-[patch."https://github.com/LiGoldragon/criome-cozo"]
-criome-cozo = { path = "../criome-cozo" }
