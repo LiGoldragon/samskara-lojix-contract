@@ -1,0 +1,10 @@
+[package]
+name = "samskara-lojix-contract"
+version = "0.1.0"
+edition = "2024"
+description = "Datalog schema contract between Samskara and Lojix agents"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+criome-cozo = { path = "../criome-cozo" }

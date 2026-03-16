@@ -1,0 +1,22 @@
+:create transpiler_version {
+  id: String,
+  hash: String,
+  lang: String,
+  live: Bool
+}
+
+:create eval_request {
+  request_id: String,
+  version_id: String,
+  input_hash: String,
+  lojix_source_hash: String
+}
+
+:create eval_result {
+  request_id: String =>
+  version_id: String,
+  input_hash: String,
+  output_kind: String,
+  value: String,
+  live: Bool
+}
