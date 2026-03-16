@@ -9,28 +9,43 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    criome-cozo-src = { url = "github:LiGoldragon/criome-cozo"; flake = false; };
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, crane, fenix, ... }:
+  outputs = { self, nixpkgs, flake-utils, crane, fenix, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
         rustToolchain = fenix.packages.${system}.latest.toolchain;
         craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
-        src = craneLib.cleanCargoSource ./.;
-      in
-      {
-        packages.default = craneLib.buildPackage {
+
+        # Include .cozo files alongside standard cargo sources
+        cozoFilter = path: _type: builtins.match ".*\\.cozo$" path != null;
+        sourceFilter = path: type:
+          (cozoFilter path type) || (craneLib.filterCargoSources path type);
+        src = pkgs.lib.cleanSourceWith {
+          src = ./.;
+          filter = sourceFilter;
+        };
+
+        commonArgs = {
           inherit src;
           pname = "samskara-lojix-contract";
           cargoExtraArgs = "--lib";
         };
+        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+      in
+      {
+        packages.default = craneLib.buildPackage (commonArgs // {
+          inherit cargoArtifacts;
+        });
 
-        checks.default = craneLib.buildPackage {
-          inherit src;
-          pname = "samskara-lojix-contract";
-          cargoExtraArgs = "--lib";
+        checks = {
+          build = craneLib.buildPackage (commonArgs // {
+            inherit cargoArtifacts;
+          });
+          tests = craneLib.cargoTest (commonArgs // {
+            inherit cargoArtifacts;
+          });
         };
 
         devShells.default = craneLib.devShell {
