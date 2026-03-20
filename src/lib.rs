@@ -74,10 +74,12 @@ pub struct RelationSchema {
 // Contract helpers
 // ---------------------------------------------------------------------------
 
-fn col(name: &str, col_type: ColumnType) -> Column {
-    Column {
-        name: name.to_string(),
-        col_type,
+impl Column {
+    fn new(name: &str, col_type: ColumnType) -> Self {
+        Self {
+            name: name.to_string(),
+            col_type,
+        }
     }
 }
 
@@ -87,30 +89,30 @@ pub fn contract_schemas() -> Vec<RelationSchema> {
         RelationSchema {
             name: "transpiler_version".to_string(),
             columns: vec![
-                col("id", ColumnType::Str),
-                col("hash", ColumnType::Str),
-                col("lang", ColumnType::Str),
-                col("live", ColumnType::Bool),
+                Column::new("id", ColumnType::Str),
+                Column::new("hash", ColumnType::Str),
+                Column::new("lang", ColumnType::Str),
+                Column::new("live", ColumnType::Bool),
             ],
         },
         RelationSchema {
             name: "eval_request".to_string(),
             columns: vec![
-                col("request_id", ColumnType::Str),
-                col("version_id", ColumnType::Str),
-                col("input_hash", ColumnType::Str),
-                col("lojix_source_hash", ColumnType::Str),
+                Column::new("request_id", ColumnType::Str),
+                Column::new("version_id", ColumnType::Str),
+                Column::new("input_hash", ColumnType::Str),
+                Column::new("lojix_source_hash", ColumnType::Str),
             ],
         },
         RelationSchema {
             name: "eval_result".to_string(),
             columns: vec![
-                col("request_id", ColumnType::Str),
-                col("version_id", ColumnType::Str),
-                col("input_hash", ColumnType::Str),
-                col("output_kind", ColumnType::Str),
-                col("value", ColumnType::Str),
-                col("live", ColumnType::Bool),
+                Column::new("request_id", ColumnType::Str),
+                Column::new("version_id", ColumnType::Str),
+                Column::new("input_hash", ColumnType::Str),
+                Column::new("output_kind", ColumnType::Str),
+                Column::new("value", ColumnType::Str),
+                Column::new("live", ColumnType::Bool),
             ],
         },
     ]
@@ -125,7 +127,7 @@ pub fn create_relations_cozoscript() -> String {
 /// Loads each `:create` statement from the embedded AI-init.cozo.
 pub fn init(db: &criome_cozo::CriomeDb) -> Result<(), Box<dyn std::error::Error>> {
     let script = include_str!("../AI-init.cozo");
-    for stmt in criome_cozo::split_cozo_statements(script) {
+    for stmt in criome_cozo::Script::from_str(script) {
         if !stmt.trim().is_empty() {
             db.run_script(stmt)?;
         }
