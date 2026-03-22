@@ -10,3 +10,8 @@ This crate contains NO logic. It provides:
 - `AI-init.cozo` — a standalone CozoScript file that either agent can load directly.
 
 Do not add business logic, transpilation code, or datalog evaluation here. Those belong in the respective agent crates.
+
+## VCS
+
+Jujutsu (`jj`) is mandatory. Git is the backend only. Always pass `-m` to
+`jj` commands.

@@ -55,7 +55,7 @@
         };
 
         devShells.default = craneLib.devShell {
-          packages = [ pkgs.rust-analyzer ];
+          packages = [ pkgs.rust-analyzer pkgs.jujutsu ];
         };
       }
     );
